@@ -75,7 +75,7 @@ class ChannelError(Exception):
 
 class Decoder(srd.Decoder):
     api_version = 3
-    id = 'tpm'
+    id = 'tpm_key_sniffing'
     name = 'SPI TPM KEY SNIFFING'
     longname = 'SPI TPM KEY SNIFFING'
     desc = 'Full-duplex, synchronous, serial bus.'
