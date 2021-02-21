@@ -4,6 +4,8 @@ Decoder for sigrok that while sniffing SPI protocol extract the VMK Key from TPM
 
 # HOW TO USE:
 
+Create a directory under sigrok decoder named "tpm_key_sniffing" and add the files.
+
 example from a previous capture: <br>
 
 sigrok-cli -i untitled.vcd  -I vcd:numchannels=4 -P tpm:wordsize=8:miso=Channel_1:mosi=Channel_0:clk=Channel_2:cs=Channel_
