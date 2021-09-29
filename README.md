@@ -8,7 +8,7 @@ Create a directory under sigrok decoder named "tpm_key_sniffing" and add the fil
 
 example from a previous capture: <br>
 
-sigrok-cli -i untitled.vcd  -I vcd:numchannels=4 -P tpm:wordsize=8:miso=Channel_1:mosi=Channel_0:clk=Channel_2:cs=Channel_
+sigrok-cli -i untitled.vcd  -I vcd:numchannels=4 -P tpm:wordsize=8:miso=Channel_1:mosi=Channel_0:clk=Channel_2:cs=Channel_3
 
 # OUTPUT:
 
