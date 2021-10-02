@@ -18,6 +18,7 @@
 ## along with this program; if not, see <http://www.gnu.org/licenses/>.
 ##
 
+import re
 import sigrokdecode as srd
 from collections import namedtuple
 
@@ -105,19 +106,19 @@ class Decoder(srd.Decoder):
     annotations = (
         ('miso-data', 'MISO data'),
         ('mosi-data', 'MOSI data'),
-        ('miso-bits', 'MISO bits'),
-        ('mosi-bits', 'MOSI bits'),
-        ('warnings', 'Human-readable warnings'),
+        ('miso-bit', 'MISO bit'),
+        ('mosi-bit', 'MOSI bit'),
+        ('warning', 'Warning'),
         ('miso-transfer', 'MISO transfer'),
         ('mosi-transfer', 'MOSI transfer'),
     )
     annotation_rows = (
         ('miso-bits', 'MISO bits', (2,)),
-        ('miso-data', 'MISO data', (0,)),
-        ('miso-transfer', 'MISO transfer', (5,)),
+        ('miso-data-vals', 'MISO data', (0,)),
+        ('miso-transfers', 'MISO transfers', (5,)),
         ('mosi-bits', 'MOSI bits', (3,)),
-        ('mosi-data', 'MOSI data', (1,)),
-        ('mosi-transfer', 'MOSI transfer', (6,)),
+        ('mosi-data-vals', 'MOSI data', (1,)),
+        ('mosi-transfers', 'MOSI transfers', (6,)),
         ('other', 'Other', (4,)),
     )
     binary = (
@@ -163,26 +164,24 @@ class Decoder(srd.Decoder):
         so_bits = self.misobits if self.have_miso else None
         si_bits = self.mosibits if self.have_mosi else None
 
-
-
         if self.have_miso:
-            if self.saving==True:
+            if self.saving == True:
                 self.mymiso.append(so)
-                self.saving=False
-                if self.savingkey and self.savingkey==True:
-                    self.key.append(hex(so))
-                    print(" KEY:  ")
-                    print(self.key[0:32])
+                self.saving = False
+                if self.savingkey and self.savingkey == True:
+                    self.key.append('{:02x}'.format(so))
+                    if len(self.key) >= 32:
+                        print("KEY: {}".format(''.join([elmt for elmt in self.key])))
+                        self.savingkey = False
 
-                if self.mymiso[-1]==0 and self.mymiso[-2]==0 and self.mymiso[-3]==32 and self.mymiso[-4]==3 and self.mymiso[-5]==0 and self.mymiso[-6]==0 and self.mymiso[-7]==0 and self.mymiso[-8]==1 and self.mymiso[-9]==0 and self.mymiso[-10]==0  and self.mymiso[-11]==0 and self.mymiso[-12]==44:
-#                    print("GOT HEADER")                      
-#                if self.mymiso[-1]==0 and self.mymiso[-2]==0 and self.mymiso[-3]==20 :
-                    print("GOT HEADER")
-                    self.savingkey=True
-
+        tmp_header = ''.join(['{:02x}'.format(elmt) for elmt in self.mymiso[-12:]])
+        is_vmk_header = re.findall(r'2c000[0-6]000[1-9]000[0-1]000[0-5]200000', tmp_header)  
+        if is_vmk_header:
+            print("GOT HEADER FROM REGEX: {}".format(tmp_header))
+            self.savingkey = True           
 
         if self.have_mosi:
-            if si==36 and self.mymosi[-1]==0 and self.mymosi[-2]==212  and self.mymosi[-3]==128: 
+            if si==36 and self.mymosi[-1] == 0 and self.mymosi[-2] == 212  and self.mymosi[-3] == 128: 
                 self.saving=True
             else:
                 self.mymosi.append(si)
