@@ -1,4 +1,9 @@
 # Sigrok_TPM_SPI_Extractor
+Short introduction to the topic here:<br><br>
+https://github.com/giggi0x00/Bitlocker-SPI-TPM-Key-sniffing
+
+<br>
+<br>
 
 Decoder for sigrok that while sniffing SPI protocol extract the VMK Key from TPM.
 
